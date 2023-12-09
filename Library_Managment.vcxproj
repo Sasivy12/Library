@@ -122,12 +122,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Library.cpp" />
     <ClCompile Include="LoginWindow.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="RegisterWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Library.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="LoginWindow.h">
       <FileType>CppForm</FileType>
     </ClInclude>
