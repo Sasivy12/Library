@@ -46,6 +46,8 @@ namespace LibraryManagment {
 	private: System::Windows::Forms::DataGridView^ BookGrid;
 	private: System::Windows::Forms::Button^ SearchButton;
 	private: System::Windows::Forms::Button^ AllBooksButton;
+	private: System::Windows::Forms::Button^ RefreshButton;
+
 
 
 	protected:
@@ -72,6 +74,7 @@ namespace LibraryManagment {
 			this->BookGrid = (gcnew System::Windows::Forms::DataGridView());
 			this->SearchButton = (gcnew System::Windows::Forms::Button());
 			this->AllBooksButton = (gcnew System::Windows::Forms::Button());
+			this->RefreshButton = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BookGrid))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -164,11 +167,24 @@ namespace LibraryManagment {
 			this->AllBooksButton->Text = L"View All Books";
 			this->AllBooksButton->UseVisualStyleBackColor = true;
 			// 
+			// RefreshButton
+			// 
+			this->RefreshButton->Font = (gcnew System::Drawing::Font(L"Verdana", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->RefreshButton->Location = System::Drawing::Point(505, 149);
+			this->RefreshButton->Name = L"RefreshButton";
+			this->RefreshButton->Size = System::Drawing::Size(99, 41);
+			this->RefreshButton->TabIndex = 8;
+			this->RefreshButton->Text = L"Refresh";
+			this->RefreshButton->UseVisualStyleBackColor = true;
+			this->RefreshButton->Click += gcnew System::EventHandler(this, &Library::RefreshButton_Click);
+			// 
 			// Library
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(628, 459);
+			this->Controls->Add(this->RefreshButton);
 			this->Controls->Add(this->AllBooksButton);
 			this->Controls->Add(this->SearchButton);
 			this->Controls->Add(this->BookGrid);
@@ -188,7 +204,7 @@ namespace LibraryManagment {
 #pragma endregion
 	public: String^ name = nullptr;
 	public: User^ user = nullptr;
-	public: int^ id = 1; 
+	public: int^ id = nullptr; 
 
 	private: System::Void Library_Load(System::Object^ sender, System::EventArgs^ e) 
 	{
@@ -227,7 +243,7 @@ namespace LibraryManagment {
 			String^ Querry = "Select * from dbo.library_books Where taken_by = @ID";
 
 			SqlCommand command(Querry, % sqlConn);
-			command.Parameters->AddWithValue("@ID", 1);
+			command.Parameters->AddWithValue("@ID", id);
 
 			SqlDataReader^ reader = command.ExecuteReader();
 
@@ -243,14 +259,57 @@ namespace LibraryManagment {
 			MessageBox::Show("Database connection error", "Database Error", MessageBoxButtons::OK);
 		}
 	}
-	//public: User^	user = nullptr;
+
 	private: System::Void SearchButton_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (BookBox->Text->Length == 0)
+		{
+			MessageBox::Show("Incorect input", "Input Error", MessageBoxButtons::OK);
+		}
+
+		try
+		{
+			SqlConnection sqlConn("Data Source=DESKTOP-6QL0FP6\\MSSQLSERVER01;Initial Catalog=library;Integrated Security=True");
+			sqlConn.Open();
+
+			String^ Querry = "Update dbo.library_books  Set taken_by = @ID Where book_name = @bookName";
+
+			SqlCommand command(Querry, % sqlConn);
+			command.Parameters->AddWithValue("@ID", id);
+			command.Parameters->AddWithValue("@bookName", BookBox->Text);
+			
+			command.ExecuteNonQuery();			
+
+			sqlConn.Close();
+		}
+		catch (Exception^ e)
+		{
+			MessageBox::Show("Database connection error", "Database Error", MessageBoxButtons::OK);
+		}
+	}
+
+	private: System::Void RefreshButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
 		try
 		{
-			
+			SqlConnection sqlConn("Data Source=DESKTOP-6QL0FP6\\MSSQLSERVER01;Initial Catalog=library;Integrated Security=True");
+			sqlConn.Open();
+
+			String^ Querry = "Select * from dbo.library_books Where taken_by = @ID";
+
+			SqlCommand command(Querry, % sqlConn);
+			command.Parameters->AddWithValue("@ID", id);
+
+			SqlDataReader^ reader = command.ExecuteReader();
+
+			DataTable^ table = gcnew DataTable();
+			table->Load(reader);
+
+			BookGrid->DataSource = table;
+
+			sqlConn.Close();
 		}
-		catch (Exception^ e)
+		catch (Exception^ ex)
 		{
 			MessageBox::Show("Database connection error", "Database Error", MessageBoxButtons::OK);
 		}
