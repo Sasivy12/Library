@@ -193,6 +193,7 @@ namespace LibraryManagment {
 
 				LibraryManagment::Library lib;
 				lib.name = name;
+				lib.id = user->id;
 				lib.ShowDialog();
 			}
 			else
