@@ -144,6 +144,9 @@
     <ClInclude Include="User.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Library.resx">
+      <DependentUpon>Library.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LoginWindow.resx">
       <DependentUpon>LoginWindow.h</DependentUpon>
     </EmbeddedResource>

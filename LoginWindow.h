@@ -1,5 +1,6 @@
 #pragma once
 #include "User.h"
+#include "Library.h"
 
 namespace LibraryManagment {
 
@@ -189,6 +190,10 @@ namespace LibraryManagment {
 				user->password = reader->GetString(3);
 
 				MessageBox::Show("User succesfully found", "Input Succesfull", MessageBoxButtons::OK);
+
+				LibraryManagment::Library lib;
+				lib.name = name;
+				lib.ShowDialog();
 			}
 			else
 			{
