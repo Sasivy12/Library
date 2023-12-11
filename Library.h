@@ -1,6 +1,7 @@
 #pragma once
 #include "User.h"
 #include "Library.h"
+#include "AllBooks.h"
 
 namespace LibraryManagment {
 
@@ -143,6 +144,7 @@ namespace LibraryManagment {
 			this->BookGrid->RowHeadersWidthSizeMode = System::Windows::Forms::DataGridViewRowHeadersWidthSizeMode::DisableResizing;
 			this->BookGrid->Size = System::Drawing::Size(590, 237);
 			this->BookGrid->TabIndex = 5;
+			this->BookGrid->CellContentClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &Library::BookGrid_CellContentClick);
 			// 
 			// SearchButton
 			// 
@@ -166,6 +168,7 @@ namespace LibraryManagment {
 			this->AllBooksButton->TabIndex = 7;
 			this->AllBooksButton->Text = L"View All Books";
 			this->AllBooksButton->UseVisualStyleBackColor = true;
+			this->AllBooksButton->Click += gcnew System::EventHandler(this, &Library::AllBooksButton_Click);
 			// 
 			// RefreshButton
 			// 
@@ -240,7 +243,7 @@ namespace LibraryManagment {
 			SqlConnection sqlConn("Data Source=DESKTOP-6QL0FP6\\MSSQLSERVER01;Initial Catalog=library;Integrated Security=True");
 			sqlConn.Open();
 
-			String^ Querry = "Select * from dbo.library_books Where taken_by = @ID";
+			String^ Querry = "Select book_name, book_author from dbo.library_books Where taken_by = @ID";
 
 			SqlCommand command(Querry, % sqlConn);
 			command.Parameters->AddWithValue("@ID", id);
@@ -315,5 +318,12 @@ namespace LibraryManagment {
 		}
 	}
 
+	private: System::Void AllBooksButton_Click(System::Object^ sender, System::EventArgs^ e) 
+	{
+		LibraryManagment::AllBooks allbooks;
+		allbooks.ShowDialog();
+	}
+private: System::Void BookGrid_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
+}
 };
 }
